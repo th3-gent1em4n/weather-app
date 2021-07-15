@@ -1,8 +1,9 @@
 const express = require("express");
 const https = require("https");
 const bodyParser = require("body-parser");
+require("dotenv").config();
 
-const { stringify } = require("querystring");
+console.log(process.env.API_KEY);
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -15,7 +16,7 @@ app.post("/",function(req,res){
 
     const query = req.body.cityName;
     console.log(query);
-    const apiKey = "6e648f3a1c64d77bc01083ff1c5dd382";
+    const apiKey = process.env.API_KEY;
     const url = "https://api.openweathermap.org/data/2.5/weather?q="+ query +"&appid="+ apiKey +"&units=metric";
     
     
@@ -24,6 +25,7 @@ app.post("/",function(req,res){
         console.log(response.statusCode);
 
         response.on("data", function(data){
+            
             const weatherData = JSON.parse(data);
             const temperature = weatherData.main.temp;
             const weatherCondtion = weatherData.weather[0].description;
@@ -33,6 +35,7 @@ app.post("/",function(req,res){
             res.write(" <h2> Weather Description in "+query+" is: " + weatherCondtion + "</h2>");
             res.write("<img src=" + imageURL + ">");
             res.send();
+            
         });      
 
     });
